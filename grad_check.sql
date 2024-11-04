@@ -43,13 +43,13 @@ CREATE TABLE DegreeRequirements (
 -- Creates table to keep track of student's progress with graduating
 CREATE TABLE Progress (
     student_id INT PRIMARY KEY REFERENCES Students(student_id),
-    total_credits_completed INT DEFAULT 0,
-    total_percentage_completed DECIMAL(5, 2) DEFAULT 0.00,
+    total_credits_completed INT DEFAULT 0, -- credits completed
+    total_percentage_completed DECIMAL(5, 2) DEFAULT 0.00, -- pecentage of credits completed
     
-    core_credits_remaining INT DEFAULT 0,
-    science_credits_remaining INT DEFAULT 0,
-    math_credits_remaining INT DEFAULT 0,
-    general_ed_credits_remaining INT DEFAULT 0,
-    elective_credits_remaining INT DEFAULT 0
+    core_credits_remaining INT DEFAULT 0, -- credits remaining for core classes
+    science_credits_remaining INT DEFAULT 0, -- credits remaining for science classes
+    math_credits_remaining INT DEFAULT 0, -- credits remaining for math classes
+    general_ed_credits_remaining INT DEFAULT 0, -- credits remaining for gen ed classes
+    free_elective_credits_remaining INT DEFAULT 0 -- credits remaining for free electives
 );
 
