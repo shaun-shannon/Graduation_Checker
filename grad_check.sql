@@ -10,6 +10,7 @@ CREATE TABLE Students (
     student_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255),
     enrollment_year INT,
     graduation_year INT
 );
@@ -52,4 +53,3 @@ CREATE TABLE Progress (
     general_ed_credits_remaining INT DEFAULT 0, -- credits remaining for gen ed classes
     free_elective_credits_remaining INT DEFAULT 0 -- credits remaining for free electives
 );
-
