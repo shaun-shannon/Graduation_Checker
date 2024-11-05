@@ -8,10 +8,11 @@ USE CS_Student_Graduation_Checker;
 -- Creates table for student information
 CREATE TABLE Students (
     student_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    enrollment_year INT,
-    graduation_year INT
+    name VARCHAR(100) NOT NULL, -- Student's name
+    email VARCHAR(100) UNIQUE NOT NULL, -- Student's email
+    password VARCHAR(255), -- Student's password for user authentication
+    enrollment_year INT, -- Student's year enrolled
+    graduation_year INT -- Student's graduation year
 );
 
 -- Creates table for course information
@@ -52,4 +53,3 @@ CREATE TABLE Progress (
     general_ed_credits_remaining INT DEFAULT 0, -- credits remaining for gen ed classes
     free_elective_credits_remaining INT DEFAULT 0 -- credits remaining for free electives
 );
-
