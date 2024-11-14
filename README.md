@@ -1,33 +1,48 @@
-Computer Science Student Graduation Checker
-Project Overview
-The Computer Science Student Graduation Checker is a web-based application designed to help computer science students track their academic progress toward graduation. This application provides a personalized degree audit, displaying completed courses, currently enrolled courses, and remaining requirements for the degree. The backend uses SQL for database management and Node.js for server-side logic.
+## Computer Science Student Graduation Checker
 
-Core Functionalities
-User Registration & Authentication
-Register: Students can register with their name, email, and enrollment information.
-Login: Secure login functionality to access individual student accounts.
-Profile Management
-Personal Information: Students can enter and update their name, email, enrollment year, and expected graduation year.
-Course Management
-View Courses: Students can view available courses, including course name, code, credits, and prerequisites.
-Add Courses: Allows students to add courses they are taking, have completed, or plan to take.
-Update Course Status: Students can set course status as “completed,” “in-progress,” or “planned.”
-Track Grades: Enter grades for completed courses to maintain accurate records.
-Degree Requirements Tracking
-Display Requirements: Show the list of required courses for the degree program.
-Completion Status: Indicate which required courses have been completed and which are pending.
-Progress Monitoring
-Credit Tracking: Calculate completed credits and remaining credits.
-Completion Percentage: Display degree completion percentage based on completed vs. required credits.
-Dynamic Updates: Progress updates automatically as students add, complete, or update courses.
-Data Requirements
-Students
-Fields: student_id, name, email, password, enrollment_year, graduation_year
-Courses
-Fields: course_id, course_code, course_name, credits, category
-Student Courses
-Fields: student_course_id, student_id, course_id, status, grade, semester
-Degree Requirements
-Fields: requirement_id, course_id, requirement_type
-Progress
-Fields: student_id, total_credits_completed, percentage_completed, core_credits_remaining, science_credits_remaining, math_credits_remaining, general_education_credits_remaining, free_elective_credits_remaining
+Disclaimer: This is a collaborative project where I primarily worked on the SQL backend. This project may continue to evolve as we refine and add new features.
+
+The Computer Science Student Graduation Checker is a web-based tool tailored for computer science students to monitor their academic journey toward graduation. It provides a personalized degree audit, helping students keep track of completed, in-progress, and pending course requirements to ensure they’re on the path to graduation.
+
+## Features:
+
+**User Registration & Authentication**
+- Register with personal information, including name, email, and enrollment details.
+- Secure login to access individual student accounts.
+
+**Profile Management**
+- Update personal details such as name, email, enrollment year, and expected graduation year.
+  
+**Course Management**
+- **View Courses:** See a list of available courses with details like name, code, credits, and prerequisites.
+- **Add Courses:** Log courses as completed, in-progress, or planned.
+- Update Course Status: Modify course status and enter grades for accurate academic tracking.
+  
+## Degree Requirements Tracking
+
+- **Requirements Display:** View all courses required for the computer science degree.
+
+- **Completion Status:** Track which required courses are completed or still pending.
+
+## Progress Monitoring
+
+- **Credit Tracking:** Calculate total completed and remaining credits.
+- **Completion Percentage:** View overall degree progress based on credits completed versus required.
+- **Dynamic Updates:** Degree progress automatically updates as students manage course statuses.
+
+## Data Requirements
+**Students Table**
+
+**Fields:** student_id, name, email, password, enrollment_year, graduation_year
+Courses Table
+
+**Fields:** course_id, course_code, course_name, credits, category
+Student Courses Table
+
+**Fields:** student_course_id, student_id, course_id, status, grade, semester
+Degree Requirements Table
+
+**Fields:** requirement_id, course_id, requirement_type
+Progress Table
+
+**Fields:** student_id, total_credits_completed, percentage_completed, core_credits_remaining, science_credits_remaining, math_credits_remaining, general_education_credits_remaining, free_elective_credits_remaining
