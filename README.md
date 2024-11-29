@@ -1,6 +1,20 @@
+## TEMP INSTRUCTIONS ##
+run all queries in grad_check.sql
+
+open new terminal:
+
+
+cd backend/
+
+npm install
+
+npm start
+
+
+
 ## Computer Science Student Graduation Checker
 
-Disclaimer: This project may continue to evolve as we refine and add new features.
+Disclaimer: This is a collaborative project where I primarily worked on the SQL backend. This project may continue to evolve as we refine and add new features.
 
 The Computer Science Student Graduation Checker is a web-based tool tailored for computer science students to monitor their academic journey toward graduation. It provides a personalized degree audit, helping students keep track of completed, in-progress, and pending course requirements to ensure they’re on the path to graduation.
 
