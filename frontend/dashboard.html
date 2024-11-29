@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="dashStyle.css">
+</head>
+<body>
+    <div class="fixed-header">
+        <div class="counter">
+            Total Credits: 0 / 128
+        </div>
+        <div class="in-progress-counter">
+            In Progress Credits: 0 / 128
+        </div>
+        <div class="planned-counter">
+            Planned Credits: 0 / 128
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div id="semestersContainer"></div>
+
+    <div class="add-semester" id="addSemesterButton">
+        <button class="circle-button">+</button>
+        <span class="button-text">Add A Semester</span>
+    </div>
+
+    <div class="popup" id="semesterPopup">
+        <h3>Set Semester Name</h3>
+        <input type="text" id="semesterName" placeholder="Enter semester name">
+        <button onclick="createSemester()">OK</button>
+    </div>
+
+    <div class="popup" id="searchPopup">
+        <div class="search-header">
+            <h3>Search for Classes</h3>
+            <select id="categoryFilter" class="category-filter">
+                <option value="all">All Categories</option>
+                <option value="Core">Core</option>
+                <option value="Core Math">Core Math</option>
+                <option value="Science Elective">Science Elective</option>
+                <option value="Technical Elective">Technical Elective</option>
+                <option value="Gen Ed">Gen Ed</option>
+            </select>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search for classes...">
+        <div id="searchResults" class="search-results"></div>
+        <div class="search-footer">
+            <button class="done-button" onclick="closeSearchPopup()">Done</button>
+        </div>
+    </div>
+
+    <div class="popup" id="warningPopup">
+        <h3>Maximum number of credits reached</h3>
+        <button onclick="closeWarningPopup()">OK</button>
+    </div>
+
+    <script src="scripts/dashScript.js"></script>
+</body>
+</html>

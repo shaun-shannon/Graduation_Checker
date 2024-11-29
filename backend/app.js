@@ -1,15 +1,20 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-// const courseRoutes = require('./routes/courseRoutes');
-// const profileRoutes = require('./routes/profileRoutes');
-
-// Load environment variables
-dotenv.config();
+const courseRoutes = require('./routes/courseRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// for CORS and JSON parsing
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// Load environment variables
+dotenv.config();
 
 // Middleware to serve static files from the frontend folder
 app.use(express.static(path.join(__dirname, '../frontend/')));
@@ -20,18 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/courses', courseRoutes);
-// app.use('/api/profile', profileRoutes);
+app.use('/api/courses', courseRoutes);
 
 // For clean URLs
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/login.html'));
-});
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/register.html'));
-});
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
