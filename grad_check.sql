@@ -27,13 +27,14 @@ CREATE TABLE Courses (
 -- Creates table for information about each student's courses with separate foreign key constraints
 CREATE TABLE StudentCourses (
     student_course_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    course_id INT NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('completed', 'in-progress', 'planned')),
+    student_id INT,
+    course_id INT,
+    status VARCHAR(20) NOT NULL,
     grade VARCHAR(2),
     semester VARCHAR(20),
-    FOREIGN KEY (student_id) REFERENCES Students(student_id),
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+    FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE,
+    CHECK (status IN ('completed', 'in-progress', 'planned'))
 );
 
 -- Creates table for classes required toward completing degree
@@ -41,7 +42,7 @@ CREATE TABLE DegreeRequirements (
     requirement_id SERIAL PRIMARY KEY,
     course_id INT NOT NULL,
     requirement_type VARCHAR(50),
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
 );
 
 -- Creates table to keep track of student's progress toward graduation
@@ -54,7 +55,7 @@ CREATE TABLE Progress (
     math_credits_remaining INT DEFAULT 0,
     general_ed_credits_remaining INT DEFAULT 0,
     free_elective_credits_remaining INT DEFAULT 0,
-    FOREIGN KEY (student_id) REFERENCES Students(student_id)
+    FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE
 );
 
 INSERT INTO Courses (course_code, course_name, credits, category) VALUES
