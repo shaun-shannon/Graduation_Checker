@@ -16,8 +16,8 @@ body {
 
 .counter {
     background-color: rgba(76, 175, 80, 0.1);
-    border: 2px solid #4CAF50;
-    color: #4CAF50;
+    border: 2px solid #1737c8;
+    color: #1737c8;
 }
 
 .in-progress-counter {
@@ -1311,9 +1311,9 @@ body {
 
 /* Specific colors for each counter */
 .counter {
-    background-color: rgba(76, 175, 80, 0.1);
-    border: 2px solid #4CAF50;
-    color: #4CAF50;
+    background-color: rgba(38, 60, 200, 0.1);
+    border: 2px solid #1737c8;
+    color: #1737c8;
 }
 
 .in-progress-counter {
