@@ -1,54 +1,1516 @@
+/* Waaaaaaaaay too much stuff, might have to go through and see if there are conflicitng snippets of code*/
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f4f4f4;
+}
+
+.counter, .in-progress-counter, .planned-counter {
+    display: inline-block;
+    text-align: left;
+    font-size: 18px;
+    margin: 0 10px 5px;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+.counter {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px solid #1737c8;
+    color: #1737c8;
+}
+
+.in-progress-counter {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 2px solid #FFC107;
+    color: #B7940A;
+}
+
+.planned-counter {
+    background-color: rgba(158, 158, 158, 0.1);
+    border: 2px solid #9E9E9E;
+    color: #9E9E9E;
+    margin-bottom: 10px;
+}
+
+.divider {
+    display: none;
+}
+
+.circle-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    font-size: 20px;
     margin: 0;
+    padding: 0;
+    transition: background-color 0.2s;
 }
 
-.container {
-    width: 300px;
+.circle-button:hover {
+    background-color: #45a049;
+}
+
+.button-text {
+    font-size: 16px;
+    pointer-events: none;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+}
+
+/* Popup styles */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
     padding: 20px;
-    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 1px #ddd,
+                0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 800px;
+    max-width: 90%;
+    box-sizing: border-box;
 }
 
-.form-container {
+/* Style for popup headers */
+.popup h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Style for all inputs in popups */
+.popup input[type="text"] {
     width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"],
-button {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  box-sizing: border-box; 
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  
-}
-
-button {
+/* Style for all buttons in popups */
+.popup button {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 4px;
-    background-color: #28a745;
-    color: white;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #218838;
+.popup button:hover {
+    background-color: #45a049;
 }
 
-h2 {
+/* Semester table base */
+.semester-table {
+    width: calc(80% - 40px);
+    margin: 10px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #ddd,
+                0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Add horizontal line that stops before delete column */
+.semester-table tr:not(:last-child) td:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
+.semester-table td:last-child {
+    border: none;
+    justify-content: center;
+}
+
+/* Cell styles */
+.semester-table td {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    border-right: 1px solid #ddd;
+}
+
+/* Vertical borders for cells */
+.semester-table td:not(:last-child) {
+    border-right: 1px solid #ddd;
+}
+
+/* Delete button cell */
+.semester-table td:last-child {
+    border-right: none;
+    justify-content: center;
+}
+
+/* Course cell container */
+.course-cell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    min-width: 0;
+}
+
+/* Course code */
+.course-code {
+    min-width: 110px;
+    padding: 0 15px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #ddd;
+}
+
+/* Course name */
+.course-name {
+    flex: 1;
+    padding: 0 15px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Header row */
+.semester-table tr:first-child {
+    background-color: #f8f9fa;
+}
+
+.semester-table tr:first-child td {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Delete button */
+.delete-course-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.delete-course-btn:hover {
+    background-color: #cc0000;
+}
+
+.semester-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto 5px;
+}
+
+.semester-header {
+    width: calc(80% - 40px);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0;
+}
+
+.semester-header span {
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 0;
+}
+
+.delete-semester-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.delete-semester-btn:hover {
+    background-color: #cc0000;
+}
+
+.semester-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-classes-btn {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-classes-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.search-classes-btn:hover {
+    background-color: #45a049;
+}
+
+/* Update semester header to accommodate the new button */
+.semester-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 80%;
+    margin-left: 20px;
+}
+
+/* Common container width for consistent alignment */
+.semester-container, .add-semester {
+    width: 80%;
+    margin-left: 20px;
+    margin-right: 20px;
+    box-sizing: border-box;
+}
+
+.semester-table {
+    width: calc(80% - 40px);
+    margin: 8px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #ddd,
+                0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.semester-header {
+    width: 100%;
+    margin: 0 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.circle-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Style the plus sign */
+.add-course-btn::before {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.course-code {
+    font-weight: 500;
+    color: #444;
+}
+
+.course-name {
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-credits {
     text-align: center;
+    color: #444;
+}
+
+/* Style for semester table */
+.semester-table td {
+    padding: 8px;
+}
+
+.semester-table .course-cell {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-headers {
+    display: grid;
+    grid-template-columns: 100px 1fr 60px 30px;
+    gap: 10px;
+    padding: 8px;
+    border-bottom: 2px solid #ddd;
+    font-weight: 500;
+    color: #444;
+    background-color: #f8f9fa;
+}
+
+.search-headers span {
+    font-size: 14px;
+}
+
+/* Search results styling */
+.search-item {
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 100px 1fr 60px 30px;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+/* Alternating colors for search results */
+.search-item:nth-of-type(2n) {
+    background-color: #f8f9fa;
+}
+
+.course-code {
+    font-size: 14px;
+    font-weight: normal;
+    color: #444;
+}
+
+.course-name {
+    font-size: 14px;
+    font-weight: normal;
+    color: #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-credits {
+    font-size: 14px;
+    font-weight: normal;
+    color: #444;
+    text-align: center;
+}
+
+.search-results-container .search-item:nth-child(odd) {
+    background-color: white;
+}
+
+.search-results-container .search-item:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Center the credits */
+.semester-table td:nth-child(2) {
+    text-align: center;
+    justify-content: center;
+}
+
+/* Center the header "Total Credits" text */
+.semester-table tr:first-child td:nth-child(2) {
+    text-align: center;
+    justify-content: center;
+}
+
+.semester-table, .add-semester {
+    width: calc(100% - 20px);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.semester-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #ddd;
+    margin-bottom: 20px;
+}
+
+/* Table cells */
+.semester-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    background-color: white;
+}
+
+/* Course cell */
+.semester-table td:first-child {
+    display: flex;
+    gap: 15px;
+    padding: 0;
+}
+
+.course-code {
+    min-width: 80px;
+    padding: 12px 15px 12px 15px;
+    border-right: 1px solid #ddd;
+}
+
+.course-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 12px 15px;
+}
+
+/* Credits cell */
+.semester-table td:nth-child(2) {
+    justify-content: center;
+    padding: 0;
+    height: 100%;
+    border-right: 1px solid #ddd;
+}
+
+/* Delete button cell */
+.semester-table td:last-child {
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Add course button in search popup */
+.add-course-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.search-headers {
+    display: grid;
+    grid-template-columns: 100px 1fr 60px 30px;
+    gap: 10px;
+    padding: 8px;
+    border-bottom: 2px solid #ddd;
+    font-weight: 500;
+    color: #444;
+    background-color: #f8f9fa;
+}
+
+.search-headers span {
+    font-size: 14px;
+}
+
+/* Keep existing search-item styles */
+.search-item {
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 100px 1fr 60px 30px;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+.search-classes-btn,
+.delete-semester-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-semester-btn {
+    background-color: #ff4444;
+    font-size: 20px;
+}
+
+.search-classes-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.semester-header span {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+
+.course-cell {
+    display: grid;
+    grid-template-columns: minmax(80px, 100px) minmax(100px, 1fr);
+    gap: 15px;
+    align-items: center;
+}
+
+.course-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+/* Add shadow and border radius to table */
+.semester-table {
+    width: 80%;
+    margin-left: 20px;
+    margin-right: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #ddd,
+                0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the header row */
+.semester-table tr:first-child {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.semester-table tr:first-child td {
+    font-weight: 500;
+}
+
+/* Credits column specific styling */
+.semester-table td:nth-child(2),
+.semester-table th:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 12px 0;
+    width: 100%;
+}
+
+.semester-table td:nth-child(2) span,
+.semester-table th:nth-child(2) span {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+/* Header styles */
+.semester-table tr:first-child {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.course-header {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    border-right: none;
+}
+
+.header-code {
+    min-width: 110px;
+    padding: 0 15px;
+    border-right: 1px solid #ddd;
+    font-size: 14px;
+    font-weight: 500;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.header-name {
+    flex: 1;
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: 500;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Course cell styles */
+.course-code {
+    min-width: 110px;
+    padding: 0 15px;
+    border-right: 1px solid #ddd;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Ensure consistent button placement */
+.semester-header .button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Header styles */
+.header-code {
+    min-width: 80px;
+    padding: 12px 15px;
+    border-right: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+/* Course cell styles */
+.course-code {
+    min-width: 80px;
+    padding: 12px 15px;
+    border-right: 1px solid #ddd;
+}
+
+/* Ensure consistent widths */
+.header-code,
+.course-code {
+    width: 110px;
+    box-sizing: border-box;
+}
+
+/* Search results styles */
+.search-headers {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 0;
+    height: 44px;
+}
+
+.search-headers .course-header {
+    display: grid;
+    grid-template-columns: 110px 1fr 80px 40px;
+    height: 100%;
+    align-items: center;
+}
+
+.search-headers span {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 15px;
+}
+
+.search-headers .header-code {
+    border-right: 1px solid #ddd;
+}
+
+.search-results-container {
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.search-item {
+    display: grid;
+    grid-template-columns: 110px 1fr 60px 40px;
+    align-items: center;
+    padding: 0;
+    height: 44px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-item.even {
+    background-color: #fff;
+}
+
+.search-item.odd {
+    background-color: #f8f9fa;
+}
+
+.search-item .course-code {
+    padding: 12px 15px;
+    border-right: 1px solid #ddd;
+}
+
+.search-item .course-name {
+    padding: 12px 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-item .course-credits {
+    text-align: center;
+}
+
+.add-course-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0 auto;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Search results header */
+.search-headers .course-header {
+    display: grid;
+    grid-template-columns: 110px 1fr 80px 40px;
+    height: 100%;
+    align-items: center;
+}
+
+.search-headers span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Credits header alignment */
+.search-headers .header-credits {
+    text-align: center;
+    padding: 12px 0;
+}
+
+/* Search table styles */
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+    min-width: 100%;
+}
+
+/* Make sure all rows have full width and bottom borders */
+.search-table tr {
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    display: table-row;
+}
+
+/* Table cell styles */
+.search-table td {
+    padding: 0;
+    border-right: 1px solid #ddd;
+}
+
+.search-table td:last-child {
+    border-right: none;
+}
+
+/* Ensure cells maintain their borders */
+.course-cell {
+    border-right: 1px solid #ddd;
+}
+
+.course-credits {
+    border-right: 1px solid #ddd;
+}
+
+.button-cell {
+    border-right: none;
+}
+
+/* Search results container */
+#searchResults {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Search table styles */
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Row styles */
+.search-table tr {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 80px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Cell styles */
+.search-table td {
+    padding: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+/* Course header and cell styles */
+.course-header, .course-cell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    border-right: none;
+}
+
+/* Credits header and cell styles */
+.credits-header, .course-credits {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: none;
+    border-left: none;
+}
+
+/* Add single borders through table structure */
+.search-table td {
+    border-right: 1px solid #ddd;
+}
+
+.search-table td:last-child {
+    border-right: none;
+}
+
+/* Course header and cell styles */
+.course-header, .course-cell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    border-right: none;
+}
+
+/* Credits header and cell styles */
+.credits-header, .course-credits {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: none;
+    border-left: none;
+}
+
+/* Add single borders through table structure */
+.search-table td {
+    border-right: 1px solid #ddd;
+}
+
+.search-table td:last-child {
+    border-right: none;
+}
+
+/* Header styles */
+.header-code, .header-name, .credits-header {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Credits header specific */
+.credits-header {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Header row styles */
+.search-table tr:first-child {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Keep existing table styles */
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Row styles */
+.search-table tr {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 80px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Header styles */
+.header-code, 
+.header-name, 
+.credits-header,
+.semester-table tr:first-child td span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Credits header specific */
+.credits-header {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Credits cell specific styling */
+.semester-table td:nth-child(2) {
+    justify-content: center;
+    padding: 0;
+    height: 100%;
+    border-right: 1px solid #ddd;
+}
+
+/* Course cell styles */
+.course-cell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.course-code {
+    min-width: 110px;
+    padding: 0 15px;
+    border-right: 1px solid #ddd;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.course-name {
+    flex: 1;
+    padding: 0 15px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Delete button cell */
+.semester-table td:last-child {
+    border-right: none;
+    justify-content: center;
+}
+
+/* Header row specific styles */
+.semester-table tr:first-child td {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Delete button styling */
+.delete-course-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.delete-course-btn:hover {
+    background-color: #cc0000;
+}
+
+/* Delete button cell container */
+.semester-table td:last-child {
+    border-right: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0;
+}
+
+/* Row styles to ensure consistent height */
+.semester-table tr {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 80px minmax(1px, .6fr) 50px;
+    border-bottom: 1px solid #ddd;
+    height: 44px;
+    align-items: stretch;
+}
+
+/* All cells base styling */
+.semester-table td {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 100%;
+    border-right: 1px solid #ddd;
+}
+
+/* Credits column border */
+.semester-table td:nth-child(2) {
+    position: relative;
+}
+
+.semester-table td:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 1px;
+    background-color: #ddd;
+    pointer-events: none;
+}
+
+/* Remove any border from delete button column */
+.semester-table td:last-child {
+    border: none;
+    justify-content: center;
+}
+
+/* Search results container - optional but recommended */
+#searchResults {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Search header with filter */
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.category-filter {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.category-filter:hover {
+    border-color: #4CAF50;
+}
+
+.category-filter:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+/* Warning popup specific styles */
+#warningPopup {
+    width: 400px;
+    text-align: center;
+}
+
+#warningPopup h3 {
+    color: #000000;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#warningPopup button {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Update progress bar styles */
+.progress-bar {
+    width: calc(80% - 40px);
+    height: 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+}
+
+/* Progress bar fill styles */
+.progress-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.progress-fill.completed {
+    background-color: #4CAF50;
+}
+
+.progress-fill.in-progress {
+    background-color: #FFC107;
+}
+
+.progress-fill.planned {
+    background-color: #9E9E9E;
+}
+
+/* Semester credits counter */
+.semester-credits {
+    width: calc(80% - 40px);
+    margin: 10px auto 0;
+    text-align: left;
+}
+
+.semester-credits span {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Update the circle-button style in search results */
+.search-table .circle-button {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    padding: 0;
+    margin: 0 auto;
+    line-height: 1;
+}
+
+.search-table .circle-button:hover {
+    background-color: #45a049;
+}
+
+.delete-course-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+}
+
+/* Row styles for search table */
+.search-table tr {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 80px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Update the circle-button style in search results */
+.search-table .circle-button {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    padding: 0;
+    margin: 0 auto;
+    line-height: 1;
+}
+
+/* Add specific styling for the button cell */
+.search-table td:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+}
+
+/* Update the circle-button style in search results */
+.search-table .circle-button {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+/* Create a container for the fixed elements */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    z-index: 100;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Adjust the counter and progress bar to be inside the fixed header */
+.counter, .in-progress-counter, .planned-counter {
+    display: inline-block;
+    text-align: left;
+    font-size: 18px;
+    margin: 0 10px 5px;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+/* Specific colors for each counter */
+.counter {
+    background-color: rgba(38, 60, 200, 0.1);
+    border: 2px solid #1737c8;
+    color: #1737c8;
+}
+
+.in-progress-counter {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 2px solid #FFC107;
+    color: #B7940A;
+}
+
+.planned-counter {
+    background-color: rgba(158, 158, 158, 0.1);
+    border: 2px solid #9E9E9E;
+    color: #9E9E9E;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    width: calc(80% - 40px);
+    height: 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#semestersContainer {
+    margin-top: 140px;
+}
+
+.divider {
+    display: none;
+}
+
+/* Semester container and its direct elements */
+.semester-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto 5px;
+}
+
+/* Header containing semester name and buttons */
+.semester-header {
+    width: calc(80% - 40px);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0;
+}
+
+/* Semester table */
+.semester-table {
+    width: calc(80% - 40px);
+    margin: 8px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #ddd,
+                0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Semester credits counter */
+.semester-credits {
+    width: calc(80% - 40px);
+    margin: 5px auto 0;
+    text-align: left;
+}
+
+.semester-table, 
+.semester-header,
+.semester-credits {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.semester-container > * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* for the status tags */
+.status-tags {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.status-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Completed tag */
+.status-tag.completed {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.status-tag.completed.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* In Progress tag */
+.status-tag.in-progress {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #FFC107;
+    border: 1px solid #FFC107;
+}
+
+.status-tag.in-progress.active {
+    background-color: #FFC107;
+    color: white;
+}
+
+/* Planned tag */
+.status-tag.planned {
+    background-color: rgba(158, 158, 158, 0.2);
+    color: #9E9E9E;
+    border: 1px solid #9E9E9E;
+}
+
+.status-tag.planned.active {
+    background-color: #9E9E9E;
+    color: white;
+}
+
+.status-header {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 0 35px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 17px;
+}
+
+
+.status-tags {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    padding: 0 15px;
+}
+
+/* Ensure status tags have enough space */
+.status-tags {
+    padding: 0 15px;
+}
+
+/* Keep tag sizes consistent */
+.status-tag {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* Ensure the add semester button is hidden when not needed */
+.add-semester.hidden {
+    display: none;
+}
+
+/* Initial add semester button placement (when no semesters exist) */
+#addSemesterButton {
+    margin-left: 10.5%;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+}
+
+/* Reset margin when button follows a semester */
+.semester-container ~ #addSemesterButton {
+    margin-top: -10px;
+}
+
+.no-results-message {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    background: #f8f8f8;
+    border-radius: 8px;
+    margin: 10px;
+}
+
+.no-results-message p {
+    margin: 0;
+    font-size: 14px;
 }
