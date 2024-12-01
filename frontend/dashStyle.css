@@ -1501,3 +1501,25 @@ body {
 .semester-container ~ #addSemesterButton {
     margin-top: -10px;
 }
+
+.save-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; 
+}
+
+.save-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none; /* Remove the border */
+    background-color: #4CAF50; /* Set your preferred background color */
+    color: white; /* Set the text color */
+    border-radius: 5px; /* Add rounded corners */
+    transition: background-color 0.3s; /* Add a transition effect */
+}
+
+.save-button:hover {
+    background-color: #45a049; /* Change background color on hover */
+}
