@@ -17,7 +17,6 @@ function createSemester() {
     const semesterName = document.getElementById('semesterName').value;
     if (!semesterName) return;
 
-    // Create new semester using the container-based approach
     const tableContainer = createSemesterTable(semesterName);
     semestersContainer.appendChild(tableContainer);
     
@@ -28,6 +27,9 @@ function createSemester() {
     semesterPopup.style.display = 'none';
     searchPopup.style.display = 'block';
     document.getElementById('semesterName').value = '';
+    
+    // Immediately fetch and display all courses
+    fetchAndDisplayCourses();
 }
 
 function closeSearchPopup() {
@@ -124,7 +126,7 @@ function addCourseToSemester(code, name, credits) {
         <td><button class="delete-course-btn" onclick="removeCourse(this)">×</button></td>
     `;
     
-    // Add click handlers for status tags
+    // click handlers for status tags
     const statusTags = row.querySelectorAll('.status-tag');
     statusTags.forEach(tag => {
         tag.addEventListener('click', function() {
@@ -141,8 +143,8 @@ function addCourseToSemester(code, name, credits) {
 
 function removeCourse(button) {
     button.closest('tr').remove();
-    updateTotalCredits();  // Keep this to update semester credits
-    // Remove updateProgressBar() from here since we only want it to update when status changes
+    updateTotalCredits();
+    updateProgressBar();
     
     // Refresh search results if search popup is open
     if (searchPopup.style.display === 'block') {
@@ -170,7 +172,8 @@ function performSearch() {
     if (searchTerm.length >= 2 || selectedCategory !== 'all') {
         searchCourses(searchTerm, selectedCategory);
     } else {
-        searchResults.innerHTML = '';
+        // If no search term and category is 'all', show all courses
+        fetchAndDisplayCourses();
     }
 }
 
@@ -179,10 +182,19 @@ async function searchCourses(searchTerm, category) {
         const response = await fetch(`http://localhost:3000/api/courses/search-courses?term=${searchTerm}`);
         const courses = await response.json();
         
-        // Filter courses by category if a specific category is selected
         let filteredCourses = courses;
+        
+        // Only apply filters if search term is 2 or more characters
+        if (searchTerm.length >= 2) {
+            filteredCourses = courses.filter(course => 
+                course.course_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                course.course_name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+        
+        // Apply category filter if selected
         if (category !== 'all') {
-            filteredCourses = courses.filter(course => course.category === category);
+            filteredCourses = filteredCourses.filter(course => course.category === category);
         }
         
         // Filter out existing courses
@@ -214,6 +226,17 @@ function filterOutExistingCourses(courses) {
 function displaySearchResults(courses) {
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = '';
+    
+    // If no courses found, display message
+    if (courses.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results-message';
+        noResults.innerHTML = `
+            <p>No courses found...</p>
+        `;
+        searchResults.appendChild(noResults);
+        return;
+    }
     
     const table = document.createElement('table');
     table.className = 'search-table';
@@ -335,17 +358,50 @@ function createSemesterTable(semesterName) {
     return container;
 }
 
-function showSearchPopup(semesterContainer) {
+async function showSearchPopup(semesterContainer) {
     currentSemesterTable = semesterContainer;
-    const searchPopup = document.getElementById('searchPopup');
-    searchPopup.style.display = 'block';
     
     // Reset filters and search
     const searchInput = document.getElementById('searchInput');
-    categoryFilter.value = 'all';  // Reset category filter
+    const searchPopup = document.getElementById('searchPopup');
+    categoryFilter.value = 'all';
     searchInput.value = '';
-    searchInput.focus();
-    document.getElementById('searchResults').innerHTML = '';
+    
+    // Hide both elements initially
+    searchPopup.style.display = 'none';
+    searchResults.style.visibility = 'hidden';
+    
+    try {
+        // Fetch courses
+        const response = await fetch('http://localhost:3000/api/courses/search-courses?term=');
+        const courses = await response.json();
+        const availableCourses = filterOutExistingCourses(courses);
+        
+        // Prepare the results HTML but don't show it yet
+        displaySearchResults(availableCourses);
+        
+        // Show both elements simultaneously
+        searchPopup.style.display = 'block';
+        searchResults.style.visibility = 'visible';
+        searchInput.focus();
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        searchResults.innerHTML = '<div class="search-item">Error loading courses</div>';
+    }
+}
+
+async function fetchAndDisplayCourses() {
+    try {
+        const response = await fetch('http://localhost:3000/api/courses/search-courses?term=');
+        const courses = await response.json();
+        
+        // Filter out existing courses and display results
+        const availableCourses = filterOutExistingCourses(courses);
+        displaySearchResults(availableCourses);
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        searchResults.innerHTML = '<div class="search-item">Error searching courses</div>';
+    }
 }
 
 function handleSearchResult(code, name, credits) {
@@ -365,7 +421,6 @@ function handleSearchResult(code, name, credits) {
 // Make sure the Done button calls closeSearchPopup
 document.querySelector('.done-button').addEventListener('click', closeSearchPopup);
 
-// Add these new functions
 function showWarningPopup() {
     document.getElementById('warningPopup').style.display = 'block';
 }
