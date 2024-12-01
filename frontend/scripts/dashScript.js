@@ -11,6 +11,12 @@ const categoryFilter = document.getElementById('categoryFilter');
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
+    if (!token) {
+        // Redirect to login page if no token is found
+        window.location.href = 'index.html';
+        return;
+    }
+
     try {
         const response = await fetch('http://localhost:3000/api/courses/get-semesters', {
             method: 'GET',
@@ -638,4 +644,10 @@ async function saveClass() {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
     }
+}
+
+function logout() {
+    localStorage.removeItem('token'); 
+    alert('You have been logged out.');
+    window.location.href = 'index.html'; // Redirect to the login page
 }
