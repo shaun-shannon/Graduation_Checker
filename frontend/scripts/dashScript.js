@@ -8,10 +8,139 @@ const creditCounter = document.querySelector('.counter');
 let currentSemesterTable = null;
 const categoryFilter = document.getElementById('categoryFilter');
 
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+    try {
+        const response = await fetch('http://localhost:3000/api/courses/get-semesters', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Include the token in the request headers
+            }
+        });
+
+        const semestersData = await response.json();
+
+        if (response.ok) {
+            renderSemesters(semestersData);
+            updateProgressBar(); // Update the progress bar
+            updateTotalCredits(); // Update total credits or other counters if needed
+        } else {
+            alert('Error: ' + (semestersData.error || 'Failed to fetch semesters.'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
+});
+
+function renderSemesters(semestersData) {
+    const semestersContainer = document.getElementById('semestersContainer');
+    semestersContainer.innerHTML = ''; // Clear existing content
+
+    semestersData.forEach(semester => {
+        const semesterElement = document.createElement('div');
+        semesterElement.classList.add('semester-container');
+        semesterElement.innerHTML = `
+            <div class="semester-header">
+                <span>${semester.semester_name}</span>
+                <div class="semester-buttons">
+                    <button class="search-classes-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"></path>
+                        </svg>
+                    </button>
+                    <button class="delete-semester-btn">×</button>
+                </div>
+            </div>
+            <table class="semester-table">
+                <tr>
+                    <td class="header-cell">
+                        <div class="course-header">
+                            <span class="header-code">Course</span>
+                            <span class="header-name">Course Name</span>
+                        </div>
+                    </td>
+                    <td class="credits-header">Credits</td>
+                    <td class="status-header">Status</td>
+                    <td></td>
+                </tr>
+                ${semester.courses.map(course => `
+                    <tr>
+                        <td>
+                            <div class="course-cell">
+                                <span class="course-code">${course.course_code}</span>
+                                <span class="course-name">${course.course_name}</span>
+                            </div>
+                        </td>
+                        <td class="course-credits">${course.credits}</td>
+                        <td>
+                            <div class="status-tags">
+                                <span class="status-tag ${course.status === 'completed' ? 'completed active' : 'completed'}" data-status="completed">Completed</span>
+                                <span class="status-tag ${course.status === 'in-progress' ? 'in-progress active' : 'in-progress'}" data-status="in-progress">In Progress</span>
+                                <span class="status-tag ${course.status === 'planned' ? 'planned active' : 'planned'}" data-status="planned">Planned</span>
+                            </div>
+                        </td>
+                        <td><button class="delete-course-btn" onclick="removeCourse(this)">×</button></td>
+                    </tr>
+                `).join('')}
+            </table>
+            <div class="semester-credits"><span>Total Semester Credits: ${semester.courses.reduce((total, course) => total + course.credits, 0)}</span></div>
+        `;
+        semestersContainer.appendChild(semesterElement);
+    });
+    attachStatusTagListeners();
+}
+
+function attachStatusTagListeners() {
+    const statusTags = document.querySelectorAll('.status-tag');
+    statusTags.forEach(tag => {
+        tag.addEventListener('click', async function () {
+            const tags = this.parentElement.querySelectorAll('.status-tag');
+            tags.forEach(t => t.classList.remove('active')); // Remove active class from all tags in the same group
+            this.classList.add('active'); // Add active class to the clicked tag
+
+            const newStatus = this.dataset.status; // Get the new status
+            const row = this.closest('tr'); // Get the row
+            const courseCode = row.querySelector('.course-code').textContent.trim(); // Get the course code
+
+            try {
+                const token = localStorage.getItem('token'); // Retrieve token
+                const response = await fetch('http://localhost:3000/api/courses/update-course-status', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Include the token in the request headers
+                    },
+                    body: JSON.stringify({ courseCode, newStatus }) // Send the courseCode and newStatus to the backend
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    console.log('Course status updated successfully:', result.message);
+                } else {
+                    console.error('Error updating course status:', result.error);
+                    alert('Error updating course status: ' + (result.error || 'Unknown error.'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the course status.');
+            }
+
+            updateProgressBar(); // Update the progress bar
+            updateTotalCredits(); // Update total credits or other counters if needed
+        });
+    });
+}
+
+
 addSemesterButton.addEventListener('click', function() {
     addSemesterButton.style.display = 'none';
     semesterPopup.style.display = 'block';
 });
+
 
 function createSemester() {
     const semesterName = document.getElementById('semesterName').value;
@@ -139,20 +268,50 @@ function addCourseToSemester(code, name, credits) {
     updateTotalCredits();
 }
 
-function removeCourse(button) {
-    button.closest('tr').remove();
-    updateTotalCredits();  // Keep this to update semester credits
-    // Remove updateProgressBar() from here since we only want it to update when status changes
+// function removeCourse(button) {
+//     button.closest('tr').remove();
+//     updateTotalCredits();  // Keep this to update semester credits
+//     // Remove updateProgressBar() from here since we only want it to update when status changes
     
-    // Refresh search results if search popup is open
-    if (searchPopup.style.display === 'block') {
-        const searchTerm = searchInput.value.trim();
-        const selectedCategory = categoryFilter.value;
-        if (searchTerm.length >= 2 || selectedCategory !== 'all') {
-            searchCourses(searchTerm, selectedCategory);
+//     // Refresh search results if search popup is open
+//     if (searchPopup.style.display === 'block') {
+//         const searchTerm = searchInput.value.trim();
+//         const selectedCategory = categoryFilter.value;
+//         if (searchTerm.length >= 2 || selectedCategory !== 'all') {
+//             searchCourses(searchTerm, selectedCategory);
+//         }
+//     }
+// }
+
+async function removeCourse(button) {
+    const row = button.closest('tr');
+    const courseCode = row.querySelector('.course-code').textContent.trim();
+
+    try {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const response = await fetch('http://localhost:3000/api/courses/delete-course', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ courseCode })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            row.remove(); // Remove the row from the DOM
+            updateTotalCredits();
+        } else {
+            alert('Error: ' + (result.error || 'Failed to delete course.'));
         }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
     }
 }
+
 
 // search funtionality
 searchInput.addEventListener('input', function() {
@@ -399,6 +558,8 @@ function updateProgressBar() {
         });
     });
 
+
+
     // Calculate percentages
     const completedPercentage = (completedCredits / totalCredits) * 100;
     const inProgressPercentage = (inProgressCredits / totalCredits) * 100;
@@ -415,4 +576,66 @@ function updateProgressBar() {
     // Update counter
     const totalCurrentCredits = completedCredits + inProgressCredits + plannedCredits;
     document.querySelector('.counter').textContent = `${totalCurrentCredits} / ${totalCredits}`;
+}
+
+async function saveClass() {
+    const semestersContainer = document.getElementById('semestersContainer');
+    const semesterContainers = semestersContainer.getElementsByClassName('semester-container');
+    const semestersData = [];
+
+    Array.from(semesterContainers).forEach(semesterContainer => {
+        const semesterHeader = semesterContainer.querySelector('.semester-header span').textContent;
+        const courses = [];
+        const courseRows = semesterContainer.querySelectorAll('.semester-table tr:not(:first-child)');
+
+        courseRows.forEach(courseRow => {
+            const courseCode = courseRow.querySelector('.course-code').textContent;
+            const courseName = courseRow.querySelector('.course-name').textContent;
+            const courseCredits = courseRow.querySelector('.course-credits').textContent;
+            const statusTags = courseRow.querySelectorAll('.status-tag');
+            let courseStatus = '';
+
+            statusTags.forEach(tag => {
+                if (tag.classList.contains('active')) {
+                    courseStatus = tag.dataset.status;
+                }
+            });
+
+            courses.push({
+                courseCode,
+                courseName,
+                courseCredits,
+                courseStatus
+            });
+        });
+
+        semestersData.push({
+            semester: semesterHeader,
+            courses
+        });
+    });
+
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+    try {
+        const response = await fetch('http://localhost:3000/api/courses/save-semesters', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify(semestersData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('All semesters saved successfully!');
+        } else {
+            alert('Error: ' + (result.error || 'Failed to save semesters.'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
 }

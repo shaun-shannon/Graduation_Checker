@@ -1,4 +1,4 @@
--- Active: 1730687188808@@127.0.0.1@3306@cs_student_graduation_checker
+-- Active: 1730913994091@@127.0.0.1@3306@CS_Student_Graduation_Checker
 
 -- Creates Database
 DROP DATABASE IF EXISTS CS_Student_Graduation_Checker;
@@ -17,46 +17,30 @@ CREATE TABLE Students (
 
 -- Creates table for course information
 CREATE TABLE Courses (
-    course_id INT AUTO_INCREMENT PRIMARY KEY,
-    course_code VARCHAR(10) UNIQUE NOT NULL,
+    course_code VARCHAR(10) PRIMARY KEY,
     course_name VARCHAR(100) NOT NULL,
     credits INT NOT NULL,
     category VARCHAR(50)
 );
 
--- Creates table for information about each student's courses with separate foreign key constraints
-CREATE TABLE StudentCourses (
-    student_course_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT,
-    course_id INT,
-    status VARCHAR(20) NOT NULL,
-    grade VARCHAR(2),
-    semester VARCHAR(20),
-    FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE,
-    CHECK (status IN ('completed', 'in-progress', 'planned'))
-);
-
--- Creates table for classes required toward completing degree
-CREATE TABLE DegreeRequirements (
-    requirement_id SERIAL PRIMARY KEY,
-    course_id INT NOT NULL,
-    requirement_type VARCHAR(50),
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
-);
-
--- Creates table to keep track of student's progress toward graduation
-CREATE TABLE Progress (
-    student_id INT PRIMARY KEY,
-    total_credits_completed INT DEFAULT 0,
-    total_percentage_completed DECIMAL(5, 2) DEFAULT 0.00,
-    core_credits_remaining INT DEFAULT 0,
-    science_credits_remaining INT DEFAULT 0,
-    math_credits_remaining INT DEFAULT 0,
-    general_ed_credits_remaining INT DEFAULT 0,
-    free_elective_credits_remaining INT DEFAULT 0,
+CREATE TABLE Semesters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    semester_name VARCHAR(255) NOT NULL,
     FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE
 );
+
+CREATE TABLE StudentCourses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    semester_id INT NOT NULL,
+    course_code VARCHAR(255) NOT NULL,
+    course_name VARCHAR(255) NOT NULL,
+    credits INT NOT NULL,
+    status VARCHAR(255) NOT NULL,
+    FOREIGN KEY (semester_id) REFERENCES Semesters(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES Courses(course_code) ON DELETE CASCADE
+);
+
 
 INSERT INTO Courses (course_code, course_name, credits, category) VALUES
 -- Core Computer Science Courses
