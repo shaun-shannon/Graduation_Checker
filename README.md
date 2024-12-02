@@ -1,4 +1,4 @@
-## TEMP INSTRUCTIONS ##
+## How to Run ##
 run all queries in grad_check.sql
 
 open new terminal:
