@@ -3,13 +3,13 @@
    
 2. make sure .env file contains the correct information
    
-3. open new terminal:
+3. open new terminal, then input:
    
-   -cd backend
+   - cd backend
    
-   -npm install
+   - npm install
    
-   -npm start
+   - npm start
 
 
 
