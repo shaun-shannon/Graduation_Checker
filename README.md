@@ -4,13 +4,9 @@
 2. make sure .env file contains the correct information
    
 3. open new terminal:
-
-
-cd backend/
-
-npm install
-
-npm start
+   -cd backend
+   -npm install
+   -npm start
 
 
 
