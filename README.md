@@ -5,7 +5,9 @@
    
 3. open new terminal:
    -cd backend
+   
    -npm install
+   
    -npm start
 
 
