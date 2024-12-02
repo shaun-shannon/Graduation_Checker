@@ -1,7 +1,9 @@
 ## How to Run ##
-run all queries in grad_check.sql
-
-open new terminal:
+1. run all queries in grad_check.sql
+   
+2. make sure .env file contains the correct information
+   
+3. open new terminal:
 
 
 cd backend/
