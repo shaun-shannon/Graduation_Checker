@@ -1,14 +1,27 @@
-## TEMP INSTRUCTIONS ##
-run all queries in grad_check.sql
+## How to Run ##
+1. run all queries in grad_check.sql
+   
+2. make sure .env file contains the correct information
 
-open new terminal:
-
-
-cd backend/
-
-npm install
-
-npm start
+   PORT=3000
+   
+   DB_HOST=localhost
+   
+   DB_USER="MySQL username"
+   
+   DB_PASS="MySQL password"
+   
+   DB_NAME=CS_Student_Graduation_Checker
+   
+   JWT_SECRET=12345
+   
+4. open new terminal, then input:
+   
+   - cd backend
+   
+   - npm install
+   
+   - npm start
 
 
 
@@ -23,28 +36,33 @@ The Computer Science Student Graduation Checker is a web-based tool tailored for
 **User Registration & Authentication**
 - Register with personal information, including name, email, and enrollment details.
 - Secure login to access individual student accounts.
+- Passwords are encrypted for security.
 
-**Profile Management**
-- Update personal details such as name, email, enrollment year, and expected graduation year.
+**User Information**
+- Students can enter personal information, including their name, and email.
   
 **Course Management**
 - **View Courses:** See a list of available courses with details like name, code, credits, and prerequisites.
 - **Add Courses:** Log courses as completed, in-progress, or planned.
-- Update Course Status: Modify course status and enter grades for accurate academic tracking.
-  
-## Degree Requirements Tracking
-
-- **Requirements Display:** View all courses required for the computer science degree.
-
-- **Completion Status:** Track which required courses are completed or still pending.
+- **Update Course Status:** Modify course status and enter grades for accurate academic tracking.
+- **Delete Courses & Semester:** If a course or a semester is not to the students liking, they can delete specific courses or even delete entire semesters.
 
 ## Progress Monitoring
-
 - **Credit Tracking:** Calculate total completed and remaining credits.
 - **Completion Percentage:** View overall degree progress based on credits completed versus required.
 - **Dynamic Updates:** Degree progress automatically updates as students manage course statuses.
 
+## Search and Filtering
+- Users can search for and add courses using the search functionality.
+- Can also filter out courses depending on categories like: Core, Technical Electives etc.
+
+## Saving Progress
+- Users can ensure that the progress they made within the application is saved once they log out and log back in.
+- Data entered and saved prior to logging out can be edited.
+- Classes can be added to tables that have been saved in prior sessions.
+
 ## Data Requirements
+
 **Students Table**
 
 **Fields:** student_id, name, email, password, enrollment_year, graduation_year
