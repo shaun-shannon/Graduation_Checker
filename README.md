@@ -2,8 +2,20 @@
 1. run all queries in grad_check.sql
    
 2. make sure .env file contains the correct information
+
+   PORT=3000
    
-3. open new terminal, then input:
+   DB_HOST=localhost
+   
+   DB_USER="MySQL username"
+   
+   DB_PASS="MySQL password"
+   
+   DB_NAME=CS_Student_Graduation_Checker
+   
+   JWT_SECRET=12345
+   
+4. open new terminal, then input:
    
    - cd backend
    
