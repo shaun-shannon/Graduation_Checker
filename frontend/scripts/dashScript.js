@@ -95,7 +95,46 @@ function renderSemesters(semestersData) {
             <div class="semester-credits"><span>Total Semester Credits: ${semester.courses.reduce((total, course) => total + course.credits, 0)}</span></div>
         `;
         semestersContainer.appendChild(semesterElement);
+        // event listeners for the current semester
+        const searchButton = semesterElement.querySelector('.search-classes-btn');
+        const deleteButton = semesterElement.querySelector('.delete-semester-btn');
+        
+        // search button listener
+        searchButton.addEventListener('click', () => showSearchPopup(semesterElement));
+        
+        // delete button listener
+        deleteButton.addEventListener('click', async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const semesterName = semesterElement.querySelector('.semester-header span').textContent;
+                
+                const response = await fetch('http://localhost:3000/api/courses/delete-semester', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ semesterName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    semesterElement.remove();
+                    updateTotalCredits();
+                    updateProgressBar();
+                } else {
+                    alert('Error: ' + (result.error || 'Failed to delete semester'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the semester');
+            }
+        });
+        
+        semestersContainer.appendChild(semesterElement);
     });
+    
     attachStatusTagListeners();
 }
 
@@ -152,6 +191,15 @@ function createSemester() {
     const semesterName = document.getElementById('semesterName').value;
     if (!semesterName) return;
 
+    // Check for duplicate semester names
+    const existingSemesters = document.querySelectorAll('.semester-header span');
+    for (const semester of existingSemesters) {
+        if (semester.textContent === semesterName) {
+            alert('A semester with this name already exists. Please choose a different name.');
+            return;
+        }
+    }
+
     // Create new semester using the container-based approach
     const tableContainer = createSemesterTable(semesterName);
     semestersContainer.appendChild(tableContainer);
@@ -163,6 +211,15 @@ function createSemester() {
     semesterPopup.style.display = 'none';
     searchPopup.style.display = 'block';
     document.getElementById('semesterName').value = '';
+
+    // Reset filters and immediately search
+    const searchInput = document.getElementById('searchInput');
+    categoryFilter.value = 'all';
+    searchInput.value = '';
+    searchInput.focus();
+        
+    // Immediately perform a search with empty criteria
+    searchCourses('', 'all');
 }
 
 function closeSearchPopup() {
@@ -206,7 +263,6 @@ function updateTotalCredits() {
                 plannedCredits += credits;
             }
             
-            // Always add to semester credits (including planned)
             semesterCredits += credits;
         }
         
@@ -309,6 +365,7 @@ async function removeCourse(button) {
         if (response.ok) {
             row.remove(); // Remove the row from the DOM
             updateTotalCredits();
+            updateProgressBar(); 
         } else {
             alert('Error: ' + (result.error || 'Failed to delete course.'));
         }
@@ -331,12 +388,7 @@ categoryFilter.addEventListener('change', function() {
 function performSearch() {
     const searchTerm = searchInput.value.trim();
     const selectedCategory = categoryFilter.value;
-    
-    if (searchTerm.length >= 2 || selectedCategory !== 'all') {
-        searchCourses(searchTerm, selectedCategory);
-    } else {
-        searchResults.innerHTML = '';
-    }
+    searchCourses(searchTerm, selectedCategory);
 }
 
 async function searchCourses(searchTerm, category) {
@@ -379,6 +431,17 @@ function filterOutExistingCourses(courses) {
 function displaySearchResults(courses) {
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = '';
+
+        // If no courses found, display message
+    if (courses.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results-message';
+        noResults.innerHTML = `
+            <p>No courses found...</p>
+        `;
+        searchResults.appendChild(noResults);
+        return;
+    }
     
     const table = document.createElement('table');
     table.className = 'search-table';
@@ -491,7 +554,6 @@ function createSemesterTable(semesterName) {
     container.appendChild(header);
     container.appendChild(table);
     
-    // Add semester credits counter
     const creditsCounter = document.createElement('div');
     creditsCounter.className = 'semester-credits';
     creditsCounter.innerHTML = '<span>Total Semester Credits: 0</span>';
@@ -507,10 +569,33 @@ function showSearchPopup(semesterContainer) {
     
     // Reset filters and search
     const searchInput = document.getElementById('searchInput');
-    categoryFilter.value = 'all';  // Reset category filter
+    categoryFilter.value = 'all';
     searchInput.value = '';
     searchInput.focus();
-    document.getElementById('searchResults').innerHTML = '';
+    
+    // Immediately perform a search with empty criteria to show all courses
+    searchCourses('', 'all');
+}
+
+async function searchCourses(searchTerm, category) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/courses/search-courses?term=${searchTerm}`);
+        const courses = await response.json();
+        
+        // Filter courses by category if a specific category is selected
+        let filteredCourses = courses;
+        if (category !== 'all') {
+            filteredCourses = courses.filter(course => course.category === category);
+        }
+        
+        // Filter out existing courses
+        filteredCourses = filterOutExistingCourses(filteredCourses);
+        
+        displaySearchResults(filteredCourses);
+    } catch (error) {
+        console.error('Error searching courses:', error);
+        searchResults.innerHTML = '<div class="search-item">Error searching courses</div>';
+    }
 }
 
 function handleSearchResult(code, name, credits) {
@@ -521,16 +606,13 @@ function handleSearchResult(code, name, credits) {
     const searchTerm = searchInput.value.trim();
     const selectedCategory = categoryFilter.value;
     
-    // Refresh search results maintaining both search term and category
-    if (searchTerm.length >= 2 || selectedCategory !== 'all') {
-        searchCourses(searchTerm, selectedCategory);
-    }
+    // Refresh search results
+    searchCourses(searchTerm, selectedCategory);
 }
 
 // Make sure the Done button calls closeSearchPopup
 document.querySelector('.done-button').addEventListener('click', closeSearchPopup);
 
-// Add these new functions
 function showWarningPopup() {
     document.getElementById('warningPopup').style.display = 'block';
 }
