@@ -1,37 +1,30 @@
 const db = require('../config/db');
 
 exports.searchCourses = async (req, res) => {
-  const searchTerm = req.query.term.toLowerCase();
+  const searchTerm = req.query.term ? req.query.term.toLowerCase() : '';
 
-  // query to get ALL courses first
   const query = `
       SELECT course_code, course_name, credits, category 
       FROM Courses 
       ORDER BY course_code
   `;
   
-  // console.log('Executing query:', query);
-  
   try {
-    const [results] = await db.execute(query);
-    
-    // console.log('Database results:', results);
-    // Filter results in JavaScript for debugging
-    const filteredResults = results.filter(course => 
-        course.course_code.toLowerCase().includes(searchTerm) ||
-        course.course_name.toLowerCase().includes(searchTerm) ||
-        course.category.toLowerCase().includes(searchTerm)
-    );
-    
-    // // console output to check what is
-    // console.log('Search term:', searchTerm);
-    // console.log('Total courses:', results.length);
-    // console.log('Filtered courses:', filteredResults.length);
-    
-    res.json(filteredResults);
+      const [results] = await db.execute(query);
+      
+      // Only filter if searchTerm is not empty
+      const filteredResults = searchTerm 
+          ? results.filter(course => 
+              course.course_code.toLowerCase().includes(searchTerm) ||
+              course.course_name.toLowerCase().includes(searchTerm) ||
+              course.category.toLowerCase().includes(searchTerm)
+          )
+          : results;
+      
+      res.json(filteredResults);
   } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).json({ error: 'Database error' });
+      console.error('Database error:', err);
+      res.status(500).json({ error: 'Database error' });
   }
 };
 
@@ -195,4 +188,38 @@ exports.deleteCourse = async (req, res) => {
       console.error('Database error:', err);
       res.status(500).json({ error: 'Failed to delete course' });
   }
+};
+
+exports.deleteSemester = async (req, res) => {
+    const userId = req.user.id;
+    const { semesterName } = req.body;
+
+    try {
+        // get the semester ID
+        const [semester] = await db.execute(
+            'SELECT id FROM Semesters WHERE student_id = ? AND semester_name = ?',
+            [userId, semesterName]
+        );
+
+        if (semester.length === 0) {
+            return res.status(404).json({ error: 'Semester not found' });
+        }
+
+        // Delete associated courses
+        await db.execute(
+            'DELETE FROM StudentCourses WHERE semester_id = ?',
+            [semester[0].id]
+        );
+
+        // delete the semester
+        await db.execute(
+            'DELETE FROM Semesters WHERE id = ?',
+            [semester[0].id]
+        );
+
+        res.status(200).json({ message: 'Semester deleted successfully' });
+    } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ error: 'Failed to delete semester' });
+    }
 };
