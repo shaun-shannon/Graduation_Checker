@@ -308,6 +308,7 @@ async function removeCourse(button) {
 
         if (response.ok) {
             row.remove(); // Remove the row from the DOM
+            updateProgressBar();
             updateTotalCredits();
         } else {
             alert('Error: ' + (result.error || 'Failed to delete course.'));

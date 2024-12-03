@@ -35,34 +35,6 @@ exports.searchCourses = async (req, res) => {
   }
 };
 
-// exports.saveSemesters = async (req, res) => {
-//   const userId = req.user.id; 
-//   const semestersData = req.body;
-//   try {
-//     for (const semester of semestersData) {
-//       // Insert the semester into the Semesters table
-//       const [semesterResult] = await db.execute(
-//         'INSERT INTO Semesters (student_id, semester_name) VALUES (?, ?)',
-//         [userId, semester.semester]
-//       );
-//       const semesterId = semesterResult.insertId;
-
-//       for (const course of semester.courses) {
-//         // Insert the course into the StudentCourses table
-//         await db.execute(
-//           'INSERT INTO StudentCourses (semester_id, course_code, course_name, credits, status) VALUES (?, ?, ?, ?, ?)',
-//           [semesterId, course.courseCode, course.courseName, course.courseCredits, course.courseStatus]
-//         );
-//       }
-//     }
-//     res.status(201).json({ message: 'All semesters saved successfully' });
-//   } catch (err) {
-//     console.error('Database error:', err);
-//     res.status(500).json({ error: 'Database error' });
-//   }
-// };
-
-
 exports.saveSemesters = async (req, res) => {
   const userId = req.user.id;
   const semestersData = req.body;
