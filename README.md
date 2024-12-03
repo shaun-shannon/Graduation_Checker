@@ -39,19 +39,15 @@ The Computer Science Student Graduation Checker is a web-based tool tailored for
 - Passwords are encrypted for security.
 
 **User Information**
-- Students can enter personal information, including their name, email.
+- Students can enter personal information, including their name, and email.
   
 **Course Management**
 - **View Courses:** See a list of available courses with details like name, code, credits, and prerequisites.
 - **Add Courses:** Log courses as completed, in-progress, or planned.
 - **Update Course Status:** Modify course status and enter grades for accurate academic tracking.
 - **Delete Courses & Semester:** If a course or a semester is not to the students liking, they can delete specific courses or even delete entire semesters.
- 
-## Degree Requirements Tracking
-
 
 ## Progress Monitoring
-
 - **Credit Tracking:** Calculate total completed and remaining credits.
 - **Completion Percentage:** View overall degree progress based on credits completed versus required.
 - **Dynamic Updates:** Degree progress automatically updates as students manage course statuses.
@@ -59,6 +55,11 @@ The Computer Science Student Graduation Checker is a web-based tool tailored for
 ## Search and Filtering
 - Users can search for and add courses using the search functionality.
 - Can also filter out courses depending on categories like: Core, Technical Electives etc.
+
+## Saving Progress
+- Users can ensure that the progress they made within the application is saved once they log out and log back in.
+- Data entered and saved prior to logging out can be edited.
+- Classes can be added to tables that have been saved in prior sessions.
 
 **Students Table**
 
