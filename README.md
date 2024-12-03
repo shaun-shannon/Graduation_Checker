@@ -61,6 +61,8 @@ The Computer Science Student Graduation Checker is a web-based tool tailored for
 - Data entered and saved prior to logging out can be edited.
 - Classes can be added to tables that have been saved in prior sessions.
 
+## Data Requirements
+
 **Students Table**
 
 **Fields:** student_id, name, email, password, enrollment_year, graduation_year
